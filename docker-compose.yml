@@ -1,0 +1,82 @@
+version: '3'
+services:
+    ops-manager:
+        container_name: "ops-manager"
+        build: "ops-manager"
+        tty: true
+        restart: always
+        ports:
+            - 8080:8080
+            - 8081:8081
+        expose:
+            - "8080"
+            - "8081"
+        links:
+            - ops-appdb:ops-appdb
+            - ops-backupdb:ops-backupdb
+        depends_on:
+            - "ops-backupdb"
+            - "ops-appdb"
+        volumes:
+            - './ops-manager:/ops-manager'
+            - './data/mms-data:/data'
+            - './data/mms-logs:/logs'
+    
+    ops-appdb:
+        container_name: "ops-appdb"
+        image: mongo:4.0
+        volumes:
+            - ./data/appdb:/data/db
+        ports:
+            - "50001:27017"
+        expose:
+            - "27017"
+        command: mongod --dbpath /data/db --port 27017 --oplogSize 16 --smallfiles
+        restart: always
+    
+    ops-backupdb:
+        container_name: "ops-backupdb"
+        image: mongo:4.0
+        volumes:
+            - ./data/backupdb:/data/db
+        ports:
+            - "50002:27017"
+        expose:
+            - "27017"
+        command: mongod --dbpath /data/db --port 27017 --oplogSize 16 --smallfiles
+        restart: always
+
+    mongo-1:
+        container_name: "mongo-1"
+        build: "agent"
+        volumes:
+            - ./data/mongo-1-files:/data
+            - ./data/setup:/config-files
+            - ./data/download:/download
+        links:
+            - ops-manager:ops-manager
+        depends_on:
+            - "ops-manager"
+        expose: 
+            - "27000"
+            - "27001"
+            - "27017"
+        restart: always
+        environment: 
+            - OPSMANAGER_HOST=http://ops-manager:8080
+            - API_KEY_FILE=/config-files/agent-api-key.txt
+
+    ops-manager-setup:
+        container_name: "ops-manager-setup"
+        build: "setup"
+        tty: true
+        links:
+            - ops-manager:ops-manager
+        depends_on:
+            - "ops-manager"
+        volumes:
+            - ./setup:/setup
+            - ./data/setup:/config-files
+        restart: on-failure:20
+        environment: 
+            - OPSMANAGER_HOST=http://ops-manager:8080

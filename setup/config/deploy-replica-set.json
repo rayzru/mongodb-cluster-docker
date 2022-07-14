@@ -1,0 +1,120 @@
+{
+    "options": {
+        "downloadBase": "/download",
+        "downloadBaseWindows": "C:\\mongodb-mms-automation\\download"
+    },
+    "mongoDbVersions": [{
+        "name": "4.0.0"
+    }],
+    "monitoringVersions": [{
+        "name" : "monitoring agent",
+        "hostname" : "MACHINE_HOSTNAME",
+        "baseUrl" : "/data/monitoring",
+        "logPath" : "/data/monitoring-agent/monitoring.log"
+    }],
+    "backupVersions": [{
+        "name" : "monitoring agent",
+        "hostname" : "MACHINE_HOSTNAME",
+        "baseUrl" : "/data/backup-",
+        "logPath" : "/data/backup-agent/monitoring.log"
+    }],
+    "processes": [{
+        "args2_6": {
+            "net": {
+                "port": 28000
+            },
+            "replication": {
+                "replSetName": "RS-0"
+            },
+            "storage": {
+                "dbPath": "/data/RS-0-0"
+            },
+            "systemLog": {
+                "destination": "file",
+                "path": "/data/RS-0-0/mongodb.log"
+            }
+        },
+        "hostname": "MACHINE_HOSTNAME",
+        "logRotate": {
+            "sizeThresholdMB": 1000,
+            "timeThresholdHrs": 24
+        },
+        "name": "RS-0-0",
+        "processType": "mongod",
+        "version": "4.0.0",
+        "featureCompatibilityVersion": "4.0",
+        "authSchemaVersion": 5
+    }, {
+        "args2_6": {
+            "net": {
+                "port": 28001
+            },
+            "replication": {
+                "replSetName": "RS-0"
+            },
+            "storage": {
+                "dbPath": "/data/RS-0-1"
+            },
+            "systemLog": {
+                "destination": "file",
+                "path": "/data/RS-0-1/mongodb.log"
+            }
+        },
+        "hostname": "MACHINE_HOSTNAME",
+        "logRotate": {
+            "sizeThresholdMB": 1000,
+            "timeThresholdHrs": 24
+        },
+        "name": "RS-0-1",
+        "processType": "mongod",
+        "version": "4.0.0",
+        "featureCompatibilityVersion": "4.0",
+        "authSchemaVersion": 5
+    }, {
+        "args2_6": {
+            "net": {
+                "port": 28002
+            },
+            "replication": {
+                "replSetName": "RS-0"
+            },
+            "storage": {
+                "dbPath": "/data/RS-0-2"
+            },
+            "systemLog": {
+                "destination": "file",
+                "path": "/data/RS-0-2/mongodb.log"
+            }
+        },
+        "hostname": "MACHINE_HOSTNAME",
+        "logRotate": {
+            "sizeThresholdMB": 1000,
+            "timeThresholdHrs": 24
+        },
+        "name": "RS-0-2",
+        "processType": "mongod",
+        "version": "4.0.0",
+        "featureCompatibilityVersion": "4.0",
+        "authSchemaVersion": 5
+    }],
+    "replicaSets": [{
+        "_id": "RS-0",
+        "protocolVersion": "1",
+        "members": [{
+                "_id": 0,
+                "host": "RS-0-0"
+            },
+            {
+                "_id": 1,
+                "host": "RS-0-1"
+            },
+            {
+                "_id": 2,
+                "arbiterOnly": true,
+                "host": "RS-0-2",
+                "priority": 0
+            }
+        ]
+    }],
+    "sharding": []
+}
